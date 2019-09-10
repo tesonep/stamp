@@ -5,7 +5,7 @@ I am StampConstants.
 Class {
 	#name : #StampConstants,
 	#superclass : #Object,
-	#category : 'Stamp-Core'
+	#category : #'Stamp-Core'
 }
 
 { #category : #accessing }
@@ -17,7 +17,7 @@ StampConstants class >> defaultPort [
 { #category : #accessing }
 StampConstants class >> maxBodySize [
 	<doc>
-	^ 2 ** 20
+	^ 2 ** 24
 ]
 
 { #category : #accessing }

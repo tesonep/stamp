@@ -14,7 +14,8 @@ Class {
 		'idGenerator',
 		'heartbeat',
 		'lastActivity',
-		'inbox'
+		'inbox',
+		'mutex'
 	],
 	#category : #'Stamp-Client'
 }
@@ -118,7 +119,8 @@ StampClient >> host: hostName [
 { #category : #'initialize-release' }
 StampClient >> initialize [
 	super initialize.
-	inbox := OrderedCollection new
+	inbox := OrderedCollection new.
+	mutex := Mutex new
 ]
 
 { #category : #testing }
@@ -369,7 +371,7 @@ StampClient >> subscribeTo: destination [
 StampClient >> timeout [
 	<doc:
 		'Option-Property. Gets the timeout for the communication with the remote queue manager. The default value is 1 second'>
-	^ self optionAt: #timeout ifAbsent: [ 1	"second" ]
+	^ self optionAt: #timeout ifAbsent: [ 20	"second" ]
 ]
 
 { #category : #options }
@@ -406,8 +408,7 @@ StampClient >> wasInactiveForTooLong [
 { #category : #writing }
 StampClient >> write: frame [
 	<doc: 'Writes a given frame and flushes the connection' >
-	self writeNoFlush: frame.
-	self medium flush
+	mutex critical: [self writeNoFlush: frame. self medium flush]
 ]
 
 { #category : #writing }
