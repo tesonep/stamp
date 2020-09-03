@@ -30,7 +30,7 @@ StampClient >> clearInbox [
 StampClient >> close [
 	<doc: 'It disconnect the client by informing the remote manager. It also closes the companion medium'>
 	medium ifNotNil: [ 
-		[ [ self disconnect ] on: ConnectionClosed, ConnectionTimedOut do: [ ] ]
+		[ [ self disconnect ] on: ConnectionClosed, ConnectionTimedOut, ZnIncomplete do: [ ] ]
 			ensure: [ self closeMedium ].
 		connectFrame := connectedFrame := nil ]
 ]
