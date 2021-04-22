@@ -277,6 +277,8 @@ StampClient >> readNextFrame [
 		'It reads the next frame from the actual medium. In case of ERROR frame, it signals an error.'>
 	| frame |
 	frame := StampFrame readFrom: self medium.
+	StampFrameReadEvent new frame: frame; emit.
+	
 	self touch.
 	^ frame command = #ERROR
 		ifTrue: [ StampError signalFor: frame ]
@@ -295,7 +297,6 @@ This call may fail by Timeout.'>
 	started := Time millisecondClockValue.
 	[
 		frame := self readNextFrame.
-		StampFrameReadEvent new frame: frame; emit.
 		frame command isEmpty
 			ifFalse: [ 
 				(block value: frame)
