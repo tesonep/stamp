@@ -98,9 +98,7 @@ StampClient >> heartbeat [
 
 { #category : #options }
 StampClient >> heartbeat: milliseconds [
-	<doc: 'Option-Property. It sets the option heartbeat. Value expected in milliseconds.  The value of the heartbeat should be at least 4 times the timeout property'>
-	self timeout * 1000 * 4 < milliseconds
-		ifFalse: [ self error: 'heartbeat must be larger than 4 times the timeout' ].
+	<doc: 'Option-Property. Value expected in milliseconds.'>
 	self optionAt: #heartbeat put: milliseconds
 ]
 
@@ -280,6 +278,10 @@ StampClient >> readNextFrame [
 	StampFrameReadEvent new frame: frame; emit.
 	
 	self touch.
+	
+	frame command isEmpty ifTrue: [ 
+		self write: StampEmptyFrame new ].
+	
 	^ frame command = #ERROR
 		ifTrue: [ StampError signalFor: frame ]
 		ifFalse: [ frame ]
@@ -294,14 +296,14 @@ This call may fail by Timeout.'>
 	| frame started |
 	self writeHeartbeatIfNeeded.
 	(self readFromInboxSuchThat: block) ifNotNil: [ :found | ^ found ].
-	started := Time millisecondClockValue.
 	[
+		started := Time millisecondClockValue.
 		frame := self readNextFrame.
 		frame command isEmpty
 			ifFalse: [ 
 				(block value: frame)
 					ifTrue: [ ^ frame ]
-					ifFalse: [ inbox add: frame ] ].
+					ifFalse: [ inbox add: frame ] ].				
 		(Time millisecondsSince: started) / 1000 > self timeout
 			ifTrue: [ ^ self failedToReadInTimeout ] ] repeat
 ]
