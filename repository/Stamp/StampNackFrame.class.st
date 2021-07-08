@@ -8,7 +8,7 @@ Sent to refuse the reception of a message.
 Class {
 	#name : #StampNackFrame,
 	#superclass : #StampClientFrame,
-	#category : 'Stamp-Core'
+	#category : #'Stamp-Core'
 }
 
 { #category : #accessing }
@@ -26,6 +26,17 @@ StampNackFrame >> id [
 { #category : #accessing }
 StampNackFrame >> id: string [
 	self headerAt: #id put: string
+]
+
+{ #category : #accessing }
+StampNackFrame >> requeue [
+	^ self headerAt: #requeue
+]
+
+{ #category : #accessing }
+StampNackFrame >> requeue: aBoolean [
+
+	^ self headerAt: #requeue put: aBoolean printString
 ]
 
 { #category : #accessing }
